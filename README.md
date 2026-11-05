@@ -67,3 +67,11 @@ To get the project running on your computer:
 ## About This Project
 
 Between Us is a senior project for the Software Development programme at Brigham Young University–Idaho.
+
+## Favorite Quote
+
+Olaniyi Bello's Favorite Quote:
+
+> "Don't let your children do anything that makes you dislike them."
+>
+> — Jordan Peterson
