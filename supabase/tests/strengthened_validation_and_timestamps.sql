@@ -4,7 +4,7 @@
 BEGIN;
 SET LOCAL lock_timeout = '3s';
 SET LOCAL statement_timeout = '30s';
-SET LOCAL bus_test.user_id = '0b927e7a-d44f-4c57-b16a-bea2e204ebd3';
+SET LOCAL bus_test.user_id = 'REPLACE_WITH_DEDICATED_TEST_USER_UUID';
 
 CREATE FUNCTION pg_temp.bus_expect_failure(
   statement text, expected_state text, expected_constraint text DEFAULT NULL

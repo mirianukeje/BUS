@@ -1,85 +1,71 @@
-# Sprint 1 pre-commit review
+# Sprint 1 final review
 
-Reviewed on 2026-11-16 on `olaniyi-s1`, against local `main`. Remote branch state
-was not fetched or compared. No commit, push, remote test, or deployment was made.
+Finalized on 2026-11-16 on `olaniyi-s1`, targeting `main`. The database implementation
+and approved ESLint setup are complete. Mirian reviewed and approved the existing
+interface scaffold changes, as confirmed by the developer. Final cleanup changes
+only documentation, the two test-user placeholders, and ESLint configuration; it
+adds no authentication or application functionality.
 
-## Branch contents
+## Included work
 
-Existing commit `0a31737` adds the root layout and placeholder pages, PostCSS
-configuration, a generated Next type-path update, and an ignore rule for TypeScript
-build caches. These are already part of this branch relative to local main, even
-though the new database work does not edit interfaces. Coordinate this existing
-scaffold scope with the teammate before opening the PR; no history was rewritten.
+- Next.js project scaffold: root layout, homepage, check-in and journal placeholders,
+  PostCSS setup, generated Next type imports, and TypeScript cache ignore rule.
+- Supabase PostgreSQL tables: profiles, check-ins, and journal entries with UUID
+  keys, Auth foreign keys, cascade behavior, required fields, and user/date indexes.
+- Three versioned migrations: schema/defaults; twelve ownership RLS policies and
+  CRUD privileges; stronger whitespace validation and creation-time protection.
+- SQL permission audit, rollback constraint/trigger suites, two-user API security
+  runner, and local mocked runner tests.
+- Environment template, setup guides, sanitized test evidence, and PR description.
+- Official Next.js Core Web Vitals/TypeScript flat ESLint configuration with
+  generated-output, dependency, coverage, and generated Next declaration ignores.
 
-New files cover three SQL migrations, a placeholder environment template, setup and
-security documentation, the API security runner, read-only permission audit,
-rollback constraint/trigger tests, sanitized evidence, and a draft PR description.
-No authentication implementation, application client, SDK dependency, or UI change
-was added in this finalization work. Database files remain untracked until staged.
+The migrations were applied manually to `between-us-dev`. Their CLI history must
+be reconciled before automated migration deployment; do not replay applied files.
+No migration was rewritten during this cleanup. Development test UUIDs have been
+replaced with documented placeholders, and credentials stay out of tracked files.
 
-## Constraint/trigger review
-
-- Auth foreign keys are required, use UUIDs, and cascade when an Auth user is
-  deleted. Entry records do not depend on a profile row. No profile signup trigger
-  is installed, avoiding overlap with authentication work.
-- Applied migrations 1/2 use NOT NULL plus `length(btrim(...)) > 0`. Prepared
-  migration 3 replaces the CHECKs with a non-whitespace-character regex, covering
-  standard whitespace. It preserves NOT NULL and optional fields. Non-ASCII
-  whitespace classification depends on database locale.
-- Primary keys provide uniqueness, entry UUID defaults avoid sequence permissions,
-  and composite indexes support per-user date queries. There is no fixed emotion
-  vocabulary, length limit, or one-check-in-per-day constraint.
-- Required `timestamptz` columns default to transaction time. The BEFORE UPDATE
-  trigger replaces journal `updated_at` with `now()` even if a client supplies a
-  different update time; it leaves `created_at` alone.
-- Prepared migration 3 rejects changes to `created_at` on all three tables, while
-  unchanged values and normal edits remain valid. Initial timestamps are still
-  client-suppliable on INSERT, so this does not provide audit-grade provenance.
-- The trigger is SECURITY INVOKER, uses an empty search path, and needs no
-  privileged signup hook. The function privilege revoke does not block the existing
-  trigger from firing.
-
-## Checks and evidence
+## Validation results
 
 | Check | Result |
 | --- | --- |
-| User-executed original two-user API security suite | PASS, all three tables, exit 0; predates migration 3 and new timestamp assertions |
-| `node --check scripts/verify-database.mjs` | PASS |
-| `node --test scripts/verify-database.test.mjs` | PASS: three mocked local tests, no external requests |
-| SQL/PL/pgSQL parsing | PASS: all six SQL files parsed with temporary pglast 8.8/PostgreSQL 18 parser; no project dependency added |
-| `npm run build -- --webpack` | PASS, including TypeScript; no duplicate type cleanup needed on latest run |
-| `npm run lint` | FAIL: empty ESLint config, generated `.next` files included, missing plugin rule definitions (59 errors, 20 warnings in this run) |
-| Credential/format scan of candidate database files | No local key matches, key/JWT literals, or trailing whitespace found |
-| `.env.local` Git ignore | Confirmed ignored; only placeholder `.env.example` is a candidate |
-| Baseline rollback SQL | Developer reported whole-script-style success; see evidence qualification |
-| Migration 3 / new rollback SQL / revised API runner | Prepared, not executed against a database; no local PostgreSQL/Supabase CLI; Docker daemon unavailable |
+| Developer's live API security suite | PASS on all three tables, exit 0 |
+| Creation-time protection | PASS on all three tables in live API suite |
+| Journal update time across transactions | PASS in live API suite |
+| API fixture deletion | Verified by successful suite; tokens subsequently cleared |
+| SQL constraints/timestamps | Developer reports completed verification; baseline success recorded; no detailed strengthened SQL log supplied |
+| `npm run lint` | PASS, no errors or warnings |
+| `npx tsc --noEmit` | PASS |
+| `npm run build -- --webpack` | PASS |
+| Runner syntax checks | PASS |
+| Mocked runner tests | PASS, three local cases with all requests replaced |
+| Credential and generated-file review | No credential literals or generated build artifacts included; `.env.local` ignored |
 
-The initial Webpack build failed on duplicate `LayoutProps` declarations from
-`.next/dev/types/* 2.ts`. Four duplicate generated files were preserved outside
-the project in a task temporary directory; no tracked source/configuration was
-changed, and the repeated build passed. Duplicates may recur under synchronized
-folders; investigate with the application owner if they return. The default
-Turbopack build was not rerun in this final review; earlier sandbox attempts could
-not bind its worker port. Webpack success is not a Turbopack runtime claim.
+See [the evidence](sprint-1-evidence.md) for exact supplied API output and the
+limits of observed SQL results. Remote tests were not rerun during final cleanup.
+Default Turbopack previously encountered a worker-port restriction in this
+environment; the verified production build uses Webpack without changing scripts.
 
-## Remaining actions before a clean sign-off
+## Schema and operational limits
 
-1. Review the live original CHECK names and invalid-row counts using the read-only
-   queries in `migration-3-validation.md`. Local migration 1 uses the expected
-   PostgreSQL-generated names; live names have not been queried by the assistant.
-   Obtain approval before applying migration 3 or running remote write tests.
-2. After migration 3, execute the new rollback test and revised API runner; record
-   new results without relabeling the old security PASS. Runtime assertions remain
-   unverified. Account-deletion cascades are not tested.
-3. Have the application setup owner configure ESLint and generated-file ignores;
-   do not represent the current lint command as passing.
-4. Review existing scaffold changes in the branch with the teammate, plus any
-   changes on the actual PR base. No automatic branch cleanup was performed.
-5. Review/stage the intended files, then obtain approval before commit or push.
+Required text must contain a non-whitespace character; non-ASCII whitespace
+classification depends on database locale. Optional text stays nullable, emotions
+are free text, and there is no one-check-in-per-day constraint. Creation timestamps
+cannot change after insertion, but initial timestamp values remain client-suppliable.
+Journal updates use transaction time, so multiple updates in one transaction can
+have equal `updated_at`. These are not audit-grade provenance guarantees.
 
-The API runner targets whichever project is configured, not an enforced allowlist.
-Its success path verifies fixture deletion, while error cleanup is best effort and
-does not independently confirm absence after every cleanup request. Keep using
-dedicated development accounts, avoid concurrent profile creation, and inspect
-fixtures after any failed/interrupted run. The recorded successful run completed
-cleanup; no rerun was performed here.
+Authentication/session handling and application client integration remain with
+their implementation owner. No automatic profile signup trigger was added.
+Account-deletion cascades were not tested destructively. The API runner uses the
+configured project rather than an allowlist and requires dedicated test accounts
+without profiles. Avoid concurrent profile creation and inspect fixtures after
+failed/interrupted runs; fallback cleanup is best effort.
+
+## Handoff
+
+The approved finalization stages only README, Sprint 1 documentation, SQL test-user
+placeholder replacements, and `eslint.config.mjs`. Earlier scaffold/database commits
+remain intact. Push and PR creation follow successful local verification; the PR
+must target `main` and remain unmerged. No remote migration or history repair is
+part of this handoff.

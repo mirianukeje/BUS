@@ -1,8 +1,13 @@
 # BUS development database
 
-These files prepare the database for `between-us-dev`. They do not provision a
-project, apply migrations, install SDKs, or implement authentication. Coordinate
-with the authentication owner before applying them to a shared project.
+Sprint 1 database implementation is complete in `between-us-dev`. The developer
+applied all three SQL migrations manually and completed the live API security and
+timestamp tests with exit code 0. These files document the setup and repeatable
+verification; they do not implement authentication or an application client.
+
+**Migration history must be reconciled before automated migration deployment.**
+Manual SQL Editor execution does not register CLI migration history. Do not replay
+the applied migrations with `db push` or reset the remote database.
 
 ## Schema
 
@@ -19,9 +24,9 @@ owner can explicitly insert a profile after signup. Check-ins and journals do no
 require a profile row first.
 
 Migrations 1/2 reject empty strings and strings containing only ordinary spaces.
-Prepared migration 3 extends this to standard-whitespace-only text and protects
-`created_at` from changes after insertion. It is not yet applied remotely; see
-[migration 3 validation](migration-3-validation.md) for preflight and tests.
+Applied migration 3 extends this to standard-whitespace-only text and protects
+`created_at` from changes after insertion. See
+[migration 3 validation](migration-3-validation.md) for behavior and repeatable tests.
 Emotions remain free text until the team agrees on a vocabulary. Optional text can
 be NULL. There is no one-check-in-per-day constraint. Both entry tables have an
 index on `(user_id, created_at DESC)`; primary keys already have unique indexes.
@@ -59,7 +64,7 @@ These variables alone do not connect the application. The authentication owner
 should choose the shared Supabase client helpers and dependencies. No parallel
 client or session implementation is introduced by this database work.
 
-## Apply migrations (requires separate approval)
+## Migration workflow for new environments and future changes
 
 Use the Supabase CLI workflow so migration history stays aligned with Git.
 Install the CLI using the [official installation instructions](https://supabase.com/docs/guides/local-development/cli/getting-started).
@@ -93,16 +98,17 @@ This repository currently contains migrations only, without `supabase/config.tom
    ```
 
    For a new database this applies all three migration files in timestamp order.
-   For the existing development database, only migration 3 should be newly pending;
-   confirm migration history first. All use transactions. The first
+   All three already exist in the current development database, so reconcile
+   recorded history before using this workflow there; none should be replayed.
+   All use transactions. The first
    migration immediately enables RLS and removes client privileges, so a failure
    before the second leaves the tables closed to client access.
 4. Verify the schema and run the tests in
    [database-security-tests.md](database-security-tests.md).
 
-Do not run a remote database reset. Do not paste the migrations into the Dashboard
-and then also run `db push`: Dashboard execution does not maintain CLI migration
-history. After migrations are applied and shared, use new migration files for
+Do not run a remote database reset. The Sprint 1 migrations were applied through
+SQL Editor; reconcile their history before any `db push`. Dashboard execution does
+not maintain CLI migration history. After migrations are applied and shared, use new migration files for
 changes instead of rewriting applied versions.
 
 For an optional isolated rehearsal, initialize the CLI, install Docker, run

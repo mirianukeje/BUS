@@ -3,11 +3,12 @@
 After migration 3, also run the rollback tests and updated API runner described in
 [migration 3 validation](migration-3-validation.md). The original FK/default tests
 remain applicable; the new suite covers additional whitespace and immutable
-creation times. Migration 3 and its new tests have not been run remotely here.
+creation times. All three migrations were manually applied to `between-us-dev`.
+The developer completed the live API security and timestamp suite with exit code 0;
+see [recorded evidence](sprint-1-evidence.md). The procedures below support reruns.
 
-Run after migrations are applied to an approved disposable local database or
-`between-us-dev`. Use synthetic content only. These procedures have not been run
-against the remote project by this change.
+Use an approved disposable local database or `between-us-dev` and synthetic
+content only. No new remote test run is performed by the final cleanup.
 
 ## Prepare two identities
 

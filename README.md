@@ -30,14 +30,29 @@ We're building Between Us with:
 - React
 - TypeScript
 - Tailwind CSS
-- Supabase (planned)
+- Supabase PostgreSQL
 - Google Gemini API (optional, planned)
 
 ## Project Status
 
 Between Us is currently under development.
 
-The initial homepage, emotional check-in and journal interfaces have been started. Other features, including authentication, database integration and guided reflection, will be developed as the project progresses.
+Sprint 1 includes the Next.js interface scaffold and the Supabase PostgreSQL
+schema for profiles, check-ins, and journal entries. Mirian reviewed and approved
+the scaffold changes. Three SQL migrations provide ownership-based Row Level
+Security, required-text validation, and creation/update timestamp protection.
+The developer applied the migrations manually to `between-us-dev`; migration
+history must be reconciled before automated migration deployment.
+
+The live two-user API security and timestamp suite passed with exit code 0.
+ESLint, TypeScript, and the Webpack production build passed. See the
+[verification evidence](docs/sprint-1-evidence.md),
+[database setup guide](docs/supabase-setup.md), and
+[final review](docs/sprint-1-final-review.md).
+
+Authentication, application database integration, and guided reflection remain
+separate implementation work. Sprint 1 database completion does not imply these
+application features are implemented.
 
 ## Privacy Matters
 

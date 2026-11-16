@@ -1,8 +1,10 @@
 # Sprint 1 database review and execution guide
 
-Migration 3 is now prepared locally, not applied remotely. The updated API runner
-requires it and adds creation-time protection and cross-transaction journal time
-checks. See [the migration 3 guide](migration-3-validation.md) before rerunning.
+All three migrations were manually applied to `between-us-dev`. The updated API
+suite passed for all three tables with exit code 0, including creation-time
+protection and cross-transaction journal updates. See
+[the evidence](sprint-1-evidence.md) and [migration 3 guide](migration-3-validation.md).
+Reconcile manual migration history before automated deployment.
 
 ## Review outcome
 
@@ -15,10 +17,9 @@ do not need sequence privileges. The trigger's function EXECUTE privilege is che
 when the trigger is created; its PUBLIC revoke is not a reason to grant every API
 user function access.
 
-These are static findings. Applying files successfully does not prove that live
-privileges, policies, or the Data API settings still match. No remote SQL or API
-tests were executed during this review. Existing application and auth files are
-unchanged. Already-applied migrations were not edited.
+The developer supplied live test output confirming the exercised user access
+rules and timestamp behavior. The final cleanup does not rerun remote tests or
+change application/authentication files. Applied migrations remain unchanged.
 
 The local `.env.local` contains both required variable names, an HTTPS Supabase
 project URL, and an `sb_publishable_` key. Values were not printed. Format checks do
@@ -59,13 +60,15 @@ The explicit table grants in migration 2 handle that for these three tables, but
 they do **not** grant schema USAGE. If the audit shows authenticated schema USAGE
 is false, even correct table privileges and RLS policies cannot permit access.
 
-The narrowly scoped remedy would be a new, reviewed migration containing:
+The development audit confirmed schema USAGE is already available, so no schema
+grant fix is needed there. If a future environment lacks it, the narrowly scoped
+remedy would be a new, reviewed migration containing:
 
 ```sql
 GRANT USAGE ON SCHEMA public TO authenticated;
 ```
 
-This is a proposed fix only; it has not been applied. Do not change default grants
+This is conditional troubleshooting guidance, not a required Sprint 1 change. Do not change default grants
 globally or grant all tables to anonymous users. Future tables need their own
 explicit grants and policies too.
 
@@ -134,7 +137,8 @@ users, apply migrations, or change project permissions.
 The runner additionally tests both users' creation-time protection, normal updates
 resending unchanged creation time, and journal update-time advancement across
 requests. Expected table PASS lines now include `timestamp protection`, followed
-by a separate journal advancement PASS. It tests both users' own inserts, reads, updates, and deletes; both
+by a separate journal advancement PASS. It tests both users' own inserts, reads,
+updates, and deletes; both
 directions of forged inserts and ownership transfers; invisible cross-user reads,
 updates, and deletes; and logged-out CRUD denial on every table. It verifies
 affected rows, not just HTTP success, and rechecks attempted changes as the owner.

@@ -1,7 +1,9 @@
 # Migration 3: whitespace validation and creation-time protection
 
-Status: prepared locally; **not applied to Supabase**. Remote execution and test
-writes require separate approval. Migrations 1 and 2 are unchanged.
+Status: applied manually by the developer to `between-us-dev`, alongside
+migrations 1 and 2. The live API security and timestamp suite passed with exit
+code 0. See [the evidence](sprint-1-evidence.md). No applied migration was edited.
+Manual migration history must be reconciled before automated deployment.
 
 ## Behavior
 
@@ -35,8 +37,9 @@ No object name collides with migrations 1 or 2. New CHECK names are
 `check_ins_emotion_nonblank_check` and `journal_entries_content_nonblank_check`.
 
 The local definitions were reviewed, but live constraint names have not been
-queried by the assistant. Before applying migration 3, run this **read-only** query
-in `between-us-dev` and confirm the original names and definitions:
+queried by the assistant. For a new environment before migration 3, run this
+**read-only** query and confirm the original names and definitions. After migration
+3, the new nonblank CHECK names replace the original ones:
 
 ```sql
 SELECT c.relname AS table_name, con.conname,
@@ -68,11 +71,11 @@ is transactional: invalid data, missing objects, or errors leave existing record
 and definitions unchanged after rollback. Avoid application activity during the
 approved development migration window.
 
-Use the established migration workflow only after approval. Confirm migration
-history before `db push`, especially if migrations 1/2 were pasted into SQL Editor:
-their existing tables do not imply CLI history was recorded. Do not replay those
-files or use migration-history repair commands without a coordinated review.
-Only migration 3 should be newly applied. This guide does not authorize execution.
+The developer applied all three migrations manually in SQL Editor. Confirm and
+reconcile migration history before `db push`; existing tables do not imply CLI
+history was recorded. Do not replay any of the three files or repair history
+without a coordinated review. No automatic deployment or history repair was
+performed during finalization.
 
 ## Rollback-only SQL tests
 
@@ -123,20 +126,21 @@ denial. It also verifies:
 
 Expect a PASS line with `timestamp protection` for every table, an additional
 `PASS journal_entries: updated_at advances across transactions`, and the final
-fixture-removal PASS with exit code 0. Original recorded security evidence predates
-these assertions and must not be presented as a pass for the updated runner.
+fixture-removal PASS with exit code 0. The developer supplied this full updated
+PASS output; it is recorded separately from the earlier security-only run.
 
 Success-path fixture deletion is verified; error cleanup remains best effort.
 The runner has no project allowlist: confirm `.env.local` targets `between-us-dev`,
 use no production tokens, and avoid concurrent profile creation. Inspect synthetic
 fixtures after any failed/interrupted run; never disable RLS to make tests pass.
 
-## Evidence to collect after approval
+## Sprint 1 evidence
 
-Record live constraint-name/preflight results, application of migration 3, rollback
-SQL results, and updated API output/exit code in `sprint-1-evidence.md`. Do not
-include user IDs, keys, credentials, or private response bodies. Local syntax or
-build checks are not evidence that the new migration is applied or passes remotely.
+`sprint-1-evidence.md` records manually applied migrations, developer-reported SQL
+verification, and the full updated live API PASS output with exit code 0. Local
+lint, TypeScript, and Webpack production checks also passed. Keep future rerun
+results separate and exclude user IDs, keys, credentials, and private responses.
+Local checks do not substitute for the supplied live API evidence.
 
 ## Local checks completed
 
@@ -148,9 +152,11 @@ build checks are not evidence that the new migration is applied or passes remote
   journal update timestamp. These mocks test the runner, not PostgreSQL behavior;
   they replace every fetch and never read `.env.local` or contact Supabase.
 - `npm run build -- --webpack` passed, including TypeScript checks.
-- `npm run lint` still fails on the existing empty ESLint config and generated
-  `.next` files (59 errors, 20 warnings); no authentication/interface/setup config
-  was changed to address that separate issue.
+- `npm run lint` passed after installing the approved flat configuration in
+  `eslint.config.mjs`; no dependency installation was needed. Next.js Core Web
+  Vitals and TypeScript rules include application sources and exclude generated
+  output, coverage, dependencies, and `next-env.d.ts`.
+- `npx tsc --noEmit` passed independently.
 
 No database runtime tests were available locally: PostgreSQL/Supabase CLI are not
 installed, and the Docker daemon is not running. Parser success does not verify
