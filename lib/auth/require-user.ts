@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { isAuthSessionMissingError } from "@supabase/supabase-js";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
@@ -13,7 +14,7 @@ export async function requireUser(nextPath: string) {
     error,
   } = await supabase.auth.getUser();
 
-  if (error) {
+  if (error && !isAuthSessionMissingError(error)) {
     throw error;
   }
 

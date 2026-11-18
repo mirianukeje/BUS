@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { isAuthSessionMissingError } from "@supabase/supabase-js";
 import { AuthForm } from "@/app/components/auth-form";
 import { getSafeRedirectPath } from "@/lib/auth/redirect";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -27,7 +28,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       error,
     } = await supabase.auth.getUser();
 
-    if (error) {
+    if (error && !isAuthSessionMissingError(error)) {
       throw error;
     }
     if (user) {
