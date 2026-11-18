@@ -14,8 +14,9 @@ export const dynamic = "force-dynamic";
 export default async function SignupPage({ searchParams }: SignupPageProps) {
   const params = await searchParams;
   const nextPath = getSafeRedirectPath(params.next);
+  const supabaseConfigured = isSupabaseConfigured();
 
-  if (isSupabaseConfigured()) {
+  if (supabaseConfigured) {
     const supabase = await createClient();
     const {
       data: { user },
@@ -55,6 +56,12 @@ export default async function SignupPage({ searchParams }: SignupPageProps) {
             Back to home
           </Link>
         </div>
+        {!supabaseConfigured && (
+          <p className="auth-status" role="status">
+            Connect a Supabase project to enable account creation. See the setup
+            steps in the README.
+          </p>
+        )}
         <AuthForm mode="signup" nextPath={nextPath} />
       </section>
     </main>

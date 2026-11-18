@@ -1,22 +1,31 @@
-import Link from "next/link";
+import { AppShell } from "@/app/components/app-shell";
 import { requireUser } from "@/lib/auth/require-user";
 
+export const dynamic = "force-dynamic";
+
 export default async function JournalPage() {
-  await requireUser("/journal");
+  const user = await requireUser("/journal");
 
   return (
-    <main className="simple-page">
-      <Link className="wordmark" href="/">
-        Between <span>Us</span>
-      </Link>
-      <section className="simple-content">
+    <AppShell activePage="journal" email={user.email}>
+      <div className="dashboard-heading">
+        <div>
+          <p className="dashboard-date">YOUR PRACTICES</p>
+          <h1>Journal</h1>
+          <p className="dashboard-intro">
+            A quiet place to put your thoughts into words.
+          </p>
+        </div>
+      </div>
+      <section className="empty-feature">
         <p className="eyebrow">A practice in reflection</p>
-        <h1>Journal</h1>
+        <h2>Your journal is still taking shape.</h2>
         <p>
-          A space for personal reflections. This feature is coming soon.
+          We’re building a private writing space for your reflections. Your
+          entries will be tied to your account when this feature is ready.
         </p>
         <span className="coming-soon">In development</span>
       </section>
-    </main>
+    </AppShell>
   );
 }

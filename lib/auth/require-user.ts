@@ -1,7 +1,12 @@
 import { redirect } from "next/navigation";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export async function requireUser(nextPath: string) {
+  if (!isSupabaseConfigured()) {
+    redirect(`/login?next=${encodeURIComponent(nextPath)}`);
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

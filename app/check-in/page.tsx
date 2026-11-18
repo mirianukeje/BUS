@@ -1,23 +1,31 @@
-import Link from "next/link";
+import { AppShell } from "@/app/components/app-shell";
 import { requireUser } from "@/lib/auth/require-user";
 
+export const dynamic = "force-dynamic";
+
 export default async function CheckInPage() {
-  await requireUser("/check-in");
+  const user = await requireUser("/check-in");
 
   return (
-    <main className="simple-page">
-      <Link className="wordmark" href="/">
-        Between <span>Us</span>
-      </Link>
-      <section className="simple-content">
+    <AppShell activePage="check-in" email={user.email}>
+      <div className="dashboard-heading">
+        <div>
+          <p className="dashboard-date">YOUR PRACTICES</p>
+          <h1>Daily check-in</h1>
+          <p className="dashboard-intro">
+            A moment to notice what you’re feeling, without needing to change it.
+          </p>
+        </div>
+      </div>
+      <section className="empty-feature">
         <p className="eyebrow">A practice in noticing</p>
-        <h1>Daily check-in</h1>
+        <h2>This check-in is still taking shape.</h2>
         <p>
-          A space to acknowledge how you’re feeling. This feature is coming
-          soon.
+          We’re making room for a thoughtful check-in experience. Your private
+          space is ready; this activity is still in development.
         </p>
         <span className="coming-soon">In development</span>
       </section>
-    </main>
+    </AppShell>
   );
 }

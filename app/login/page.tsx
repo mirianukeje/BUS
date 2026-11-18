@@ -18,8 +18,9 @@ export const dynamic = "force-dynamic";
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
   const nextPath = getSafeRedirectPath(params.next);
+  const supabaseConfigured = isSupabaseConfigured();
 
-  if (isSupabaseConfigured()) {
+  if (supabaseConfigured) {
     const supabase = await createClient();
     const {
       data: { user },
@@ -59,6 +60,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             Back to home
           </Link>
         </div>
+        {!supabaseConfigured && (
+          <p className="auth-status" role="status">
+            Connect a Supabase project to enable sign-in. See the setup steps in
+            the README.
+          </p>
+        )}
         {params.status === "signed-out" && (
           <p className="auth-status" role="status">
             You’ve signed out. Your account is safe.

@@ -1,33 +1,34 @@
-import Link from "next/link";
-import { signOut } from "@/app/actions/auth";
+import { AppShell } from "@/app/components/app-shell";
 import { requireUser } from "@/lib/auth/require-user";
+
+export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
   const user = await requireUser("/account");
 
   return (
-    <main className="simple-page">
-      <Link className="wordmark" href="/">
-        Between <span>Us</span>
-      </Link>
-      <section className="simple-content">
-        <p className="eyebrow">Your account</p>
-        <h1>Your space is ready.</h1>
-        <p className="account-email">Signed in as {user.email}</p>
-        <div className="account-actions">
-          <Link className="button button-outline" href="/check-in">
-            Daily check-in
-          </Link>
-          <Link className="button button-outline" href="/journal">
-            Journal
-          </Link>
-          <form action={signOut}>
-            <button className="button button-primary" type="submit">
-              Log out
-            </button>
-          </form>
+    <AppShell activePage="account" email={user.email}>
+      <div className="dashboard-heading">
+        <div>
+          <p className="dashboard-date">ACCOUNT</p>
+          <h1>Your account</h1>
+          <p className="dashboard-intro">The details connected to your private space.</p>
+        </div>
+      </div>
+      <section className="account-panel">
+        <div className="account-panel-avatar" aria-hidden="true">
+          {user.email?.slice(0, 1).toUpperCase() ?? "B"}
+        </div>
+        <div>
+          <p className="eyebrow">SIGNED-IN EMAIL</p>
+          <h2>{user.email}</h2>
+          <p>This email is used to sign in to your Between Us account.</p>
         </div>
       </section>
-    </main>
+      <p className="dashboard-footnote">
+        Your personal records are protected by your account and the database’s
+        ownership policies.
+      </p>
+    </AppShell>
   );
 }
