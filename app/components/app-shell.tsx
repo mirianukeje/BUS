@@ -30,14 +30,13 @@ export function AppShell({ activePage, children, email }: AppShellProps) {
 
         <div className="workspace-nav-label">YOUR SPACE</div>
         <nav aria-label="Main navigation" className="workspace-nav">
-          {navigation.map((item, index) => (
+          {navigation.map((item) => (
             <Link
               aria-current={activePage === item.key ? "page" : undefined}
               className={`workspace-nav-link${activePage === item.key ? " is-active" : ""}`}
               href={item.href}
               key={item.key}
             >
-              <span className="nav-index">{String(index + 1).padStart(2, "0")}</span>
               {item.label}
               {item.key !== "home" && <span className="nav-soon">SOON</span>}
             </Link>
@@ -88,14 +87,13 @@ export function AppShell({ activePage, children, email }: AppShellProps) {
       </div>
 
       <nav aria-label="Mobile navigation" className="workspace-mobile-nav">
-        {navigation.map((item, index) => (
+        {navigation.map((item) => (
           <Link
             aria-current={activePage === item.key ? "page" : undefined}
             className={`mobile-nav-link${activePage === item.key ? " is-active" : ""}`}
             href={item.href}
             key={item.key}
           >
-            <span>{String(index + 1).padStart(2, "0")}</span>
             {item.label}
           </Link>
         ))}

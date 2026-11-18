@@ -70,7 +70,6 @@ export default async function HomePage() {
             <Link className="feature-link" href="/check-in">
               Visit daily check-in <span aria-hidden="true">→</span>
             </Link>
-            <span aria-hidden="true" className="feature-decoration">01</span>
           </section>
 
           <section aria-labelledby="your-practices" className="dashboard-section">
@@ -83,14 +82,12 @@ export default async function HomePage() {
             </div>
             <div className="dashboard-tools">
               <Link className="dashboard-tool" href="/check-in">
-                <span aria-hidden="true" className="tool-number">01</span>
                 <span className="tool-status">IN DEVELOPMENT</span>
                 <h3>Daily check-in</h3>
                 <p>Pause and put a name to what you’re feeling.</p>
                 <span className="tool-arrow" aria-hidden="true">↗</span>
               </Link>
               <Link className="dashboard-tool" href="/journal">
-                <span aria-hidden="true" className="tool-number">02</span>
                 <span className="tool-status">IN DEVELOPMENT</span>
                 <h3>Journal</h3>
                 <p>Give your thoughts a little room on the page.</p>
@@ -122,7 +119,6 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="guest-preview">
-            <span>01</span>
             <div>
               <strong>Daily check-in</strong>
               <p>Notice what’s here, one day at a time.</p>
@@ -130,7 +126,6 @@ export default async function HomePage() {
             <span className="tool-status">IN DEVELOPMENT</span>
           </div>
           <div className="guest-preview">
-            <span>02</span>
             <div>
               <strong>Journal</strong>
               <p>Write freely in your own private space.</p>
