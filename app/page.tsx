@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { User } from "@supabase/supabase-js";
+import { isAuthSessionMissingError, type User } from "@supabase/supabase-js";
 import { AppShell } from "@/app/components/app-shell";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
@@ -23,7 +23,7 @@ export default async function HomePage() {
       error,
     } = await supabase.auth.getUser();
 
-    if (error) {
+    if (error && !isAuthSessionMissingError(error)) {
       throw error;
     }
 
