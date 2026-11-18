@@ -79,6 +79,46 @@ To get the project running on your computer:
 
 4. Open http://localhost:3000 in your browser.
 
+## Authentication setup
+
+Authentication uses Supabase Auth with cookie-based sessions through
+`@supabase/ssr`. From the repository root, copy `.env.example` to `.env.local`
+and set `NEXT_PUBLIC_SUPABASE_URL` and
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from the development Supabase project.
+These are the project URL and publishable key only; never use a service-role or
+secret key in this application. `.env.local` is ignored by Git.
+The public landing page and account screens can be previewed without these
+values, but registration, login, and session checks require valid project
+configuration.
+
+In the Supabase Dashboard for the intended development project:
+
+1. Enable Email authentication. Choose whether users must confirm their email;
+   the application supports both immediate sessions and confirmation-required
+   signups.
+2. Set the Site URL to the local app origin (`http://localhost:3000`) while
+   testing locally, and add `http://localhost:3000/auth/confirm` to the
+   Authentication URL Configuration redirect allow list. Add the equivalent
+   deployed callback URL when configuring a deployment.
+3. Keep the existing database migrations and Row Level Security policies
+   enabled. No migration or signup trigger is needed: once a session exists,
+   the app creates the authenticated user's own `public.profiles` row under the
+   existing RLS policy. With email confirmation enabled, this happens after
+   the confirmation callback exchanges the code for a session.
+
+Restart `npm run dev` after changing environment variables. Test manually by
+creating an account at `/signup`, confirming the email if requested, signing
+out, and signing back in at `/login`. Invalid credentials display the Supabase
+authentication error. The home page indicates the signed-in email; `/account`,
+`/check-in`, and `/journal` require a valid session and return unauthenticated
+visitors to login. After login, use the logout button and verify a protected
+page redirects back to login. To verify data isolation, test requests with two
+different normal user sessions against `profiles`, `check_ins`, and
+`journal_entries`; each user's queries and writes must remain subject to the
+existing RLS policies. Real registration, email delivery, and two-user RLS
+verification require the configured Supabase project and cannot be established
+by a local build alone.
+
 ## About This Project
 
 Between Us is a senior project for the Software Development programme at Brigham Young University–Idaho.
