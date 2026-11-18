@@ -87,6 +87,9 @@ and set `NEXT_PUBLIC_SUPABASE_URL` and
 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from the development Supabase project.
 These are the project URL and publishable key only; never use a service-role or
 secret key in this application. `.env.local` is ignored by Git.
+The public landing page and account screens can be previewed without these
+values, but registration, login, and session checks require valid project
+configuration.
 
 In the Supabase Dashboard for the intended development project:
 

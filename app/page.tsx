@@ -1,91 +1,126 @@
 import Link from "next/link";
+import type { User } from "@supabase/supabase-js";
 import { signOut } from "@/app/actions/auth";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function HomePage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
+export const dynamic = "force-dynamic";
 
-  if (error) {
-    throw error;
+export default async function HomePage() {
+  let user: User | null = null;
+  if (isSupabaseConfigured()) {
+    const supabase = await createClient();
+    const {
+      data: { user: authenticatedUser },
+      error,
+    } = await supabase.auth.getUser();
+
+    if (error) {
+      throw error;
+    }
+
+    user = authenticatedUser;
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-5xl px-5 py-12 sm:py-16">
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <Link className="text-lg font-semibold tracking-tight text-[#233b35]" href="/">
-          Between Us
+    <>
+      <header className="site-shell site-header">
+        <Link className="wordmark" href="/">
+          Between <span>Us</span>
         </Link>
         {user ? (
-          <div className="flex items-center gap-4 text-sm">
-            <span className="text-[#58645f]">
-              Signed in as <span className="font-medium">{user.email}</span>
+          <div className="header-actions">
+            <span className="header-email">
+              Signed in as {user.email}
             </span>
             <form action={signOut}>
-              <button
-                className="rounded-lg border border-[#31594e] px-4 py-2 font-semibold text-[#31594e] hover:bg-[#eef5f0]"
-                type="submit"
-              >
+              <button className="button button-outline" type="submit">
                 Log out
               </button>
             </form>
           </div>
         ) : (
-          <nav aria-label="Account" className="flex items-center gap-4 text-sm">
-            <Link className="font-semibold text-[#31594e]" href="/login">
+          <nav aria-label="Account" className="header-actions">
+            <Link className="text-link" href="/login">
               Log in
             </Link>
-            <Link
-              className="rounded-lg bg-[#31594e] px-4 py-2 font-semibold text-white hover:bg-[#24473d]"
-              href="/signup"
-            >
-              Create account
+            <Link className="button button-primary" href="/signup">
+              Get started
             </Link>
           </nav>
         )}
       </header>
 
-      <section className="mt-16 max-w-2xl sm:mt-24">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#52766d]">
-          A moment for yourself
-        </p>
-        <h1 className="mt-4 text-4xl font-semibold leading-tight tracking-tight text-[#233b35] sm:text-6xl">
-          Make room for what you’re feeling.
-        </h1>
-        <p className="mt-6 max-w-xl text-lg leading-8 text-[#58645f]">
-          A private space to check in with your emotions and reflect on your
-          experiences, one step at a time.
-        </p>
-        {user && (
-          <p className="mt-5 text-sm text-[#36594e]">
-            Your account is secure and your personal records remain private.
-          </p>
-        )}
-      </section>
+      <main className="site-shell home-main">
+        <section className="hero">
+          <div>
+            <p className="eyebrow">Emotional wellbeing · Relationship reflection</p>
+            <h1 className="hero-title">
+              Understand what you feel. <em>Choose how you respond.</em>
+            </h1>
+            <p className="hero-copy">
+              Between Us is a private place to notice your emotions, reflect on
+              what matters, and find your own words for it.
+            </p>
+            <div className="hero-actions">
+              {user ? (
+                <Link className="button button-primary" href="/account">
+                  Go to your account
+                </Link>
+              ) : (
+                <Link className="button button-primary" href="/signup">
+                  Create your account
+                </Link>
+              )}
+              {user ? (
+                <span className="text-link">Your space is private</span>
+              ) : (
+                <Link className="text-link" href="/login">
+                  I already have an account
+                </Link>
+              )}
+            </div>
+          </div>
+          <aside className="hero-aside">
+            <span aria-hidden="true" className="aside-index">01</span>
+            <h2 className="aside-title">Start with what’s here.</h2>
+            <p className="aside-copy">
+              You don’t need to have it all figured out. A little attention is
+              a place to begin.
+            </p>
+          </aside>
+        </section>
 
-      <nav aria-label="Personal spaces" className="mt-12 grid gap-4 sm:grid-cols-2">
-        <Link
-          className="rounded-2xl border border-[#e6e2d9] bg-white p-6 transition hover:border-[#9ab1a6]"
-          href="/check-in"
-        >
-          <h2 className="text-lg font-semibold text-[#233b35]">Daily check-in</h2>
-          <p className="mt-2 text-sm leading-6 text-[#58645f]">
-            Take a moment to acknowledge how you’re feeling.
-          </p>
-        </Link>
-        <Link
-          className="rounded-2xl border border-[#e6e2d9] bg-white p-6 transition hover:border-[#9ab1a6]"
-          href="/journal"
-        >
-          <h2 className="text-lg font-semibold text-[#233b35]">Journal</h2>
-          <p className="mt-2 text-sm leading-6 text-[#58645f]">
-            Make space for your personal reflections.
-          </p>
-        </Link>
-      </nav>
-    </main>
+        <section aria-labelledby="practice-heading" className="practice-section">
+          <div className="practice-heading">
+            <h2 id="practice-heading">A practice, at your pace</h2>
+            <p>Personal reflection, without the pressure to get it right.</p>
+          </div>
+          <nav aria-label="Personal spaces" className="practice-list">
+            <Link className="practice-item" href="/check-in">
+              <span aria-hidden="true" className="practice-number">01</span>
+              <span>
+                <h3>Check in</h3>
+                <p>Pause and notice how you’re feeling today.</p>
+              </span>
+              <span className="coming-soon">Coming soon</span>
+            </Link>
+            <Link className="practice-item" href="/journal">
+              <span aria-hidden="true" className="practice-number">02</span>
+              <span>
+                <h3>Write it down</h3>
+                <p>Give your thoughts a little room on the page.</p>
+              </span>
+              <span className="coming-soon">Coming soon</span>
+            </Link>
+          </nav>
+        </section>
+      </main>
+
+      <footer className="site-shell site-footer">
+        <span>Between Us · A space to reflect</span>
+        <span>{user ? `Signed in as ${user.email}` : "Your reflections belong to you."}</span>
+      </footer>
+    </>
   );
 }

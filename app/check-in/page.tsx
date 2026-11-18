@@ -5,16 +5,19 @@ export default async function CheckInPage() {
   await requireUser("/check-in");
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-3xl px-5 py-12 sm:py-16">
-      <Link className="text-sm font-semibold text-[#31594e]" href="/">
-        ← Between Us
+    <main className="simple-page">
+      <Link className="wordmark" href="/">
+        Between <span>Us</span>
       </Link>
-      <h1 className="mt-8 text-3xl font-semibold text-[#233b35]">
-        Daily check-in
-      </h1>
-      <p className="mt-3 leading-7 text-[#58645f]">
-        A space to acknowledge how you’re feeling. This feature is coming soon.
-      </p>
+      <section className="simple-content">
+        <p className="eyebrow">A practice in noticing</p>
+        <h1>Daily check-in</h1>
+        <p>
+          A space to acknowledge how you’re feeling. This feature is coming
+          soon.
+        </p>
+        <span className="coming-soon">In development</span>
+      </section>
     </main>
   );
 }

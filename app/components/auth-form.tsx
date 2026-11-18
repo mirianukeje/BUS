@@ -84,46 +84,42 @@ export function AuthForm({ mode, nextPath }: AuthFormProps) {
   }
 
   return (
-    <section className="mx-auto w-full max-w-md rounded-3xl border border-[#e6e2d9] bg-white p-7 shadow-sm sm:p-10">
-      <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#52766d]">
-        Between Us
-      </p>
-      <h1 className="text-3xl font-semibold tracking-tight text-[#233b35]">
-        {isSignup ? "Create your account" : "Welcome back"}
-      </h1>
-      <p className="mt-3 text-sm leading-6 text-[#58645f]">
+    <section className="auth-form">
+      <p className="eyebrow">{isSignup ? "Create an account" : "Sign in"}</p>
+      <h2>{isSignup ? "Create your account" : "Welcome back"}</h2>
+      <p className="auth-description">
         {isSignup
-          ? "Create a private space for your reflections."
-          : "Sign in to return to your private space."}
+          ? "A few details, then your private space is ready."
+          : "Sign in to return to your reflections."}
       </p>
 
-      <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+      <form className="auth-fields" onSubmit={handleSubmit}>
         {isSignup && (
-          <label className="block text-sm font-medium text-[#344a44]">
-            Name <span className="font-normal text-[#79827e]">(optional)</span>
+          <label className="auth-label">
+            Name <span className="auth-optional">(optional)</span>
             <input
               autoComplete="name"
-              className="mt-2 block w-full rounded-xl border border-[#d6dcd7] px-4 py-3 text-base outline-none focus:border-[#52766d] focus:ring-2 focus:ring-[#52766d]/20"
+              className="auth-input"
               name="displayName"
               type="text"
             />
           </label>
         )}
-        <label className="block text-sm font-medium text-[#344a44]">
+        <label className="auth-label">
           Email
           <input
             autoComplete="email"
-            className="mt-2 block w-full rounded-xl border border-[#d6dcd7] px-4 py-3 text-base outline-none focus:border-[#52766d] focus:ring-2 focus:ring-[#52766d]/20"
+            className="auth-input"
             name="email"
             required
             type="email"
           />
         </label>
-        <label className="block text-sm font-medium text-[#344a44]">
+        <label className="auth-label">
           Password
           <input
             autoComplete={isSignup ? "new-password" : "current-password"}
-            className="mt-2 block w-full rounded-xl border border-[#d6dcd7] px-4 py-3 text-base outline-none focus:border-[#52766d] focus:ring-2 focus:ring-[#52766d]/20"
+            className="auth-input"
             minLength={6}
             name="password"
             required
@@ -134,24 +130,20 @@ export function AuthForm({ mode, nextPath }: AuthFormProps) {
         {errorMessage && (
           <p
             aria-live="polite"
-            className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800"
+            className="auth-message auth-message-error"
             role="alert"
           >
             {errorMessage}
           </p>
         )}
         {statusMessage && (
-          <p
-            aria-live="polite"
-            className="rounded-xl bg-[#eef5f0] px-4 py-3 text-sm text-[#36594e]"
-            role="status"
-          >
+          <p aria-live="polite" className="auth-message" role="status">
             {statusMessage}
           </p>
         )}
 
         <button
-          className="w-full rounded-xl bg-[#31594e] px-5 py-3 font-semibold text-white transition hover:bg-[#24473d] disabled:cursor-not-allowed disabled:opacity-60"
+          className="button button-primary auth-submit"
           disabled={isSubmitting}
           type="submit"
         >
@@ -163,17 +155,14 @@ export function AuthForm({ mode, nextPath }: AuthFormProps) {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-[#58645f]">
+      <p className="auth-switch">
         {isSignup ? "Already have an account?" : "New to Between Us?"}{" "}
         <Link
-          className="font-semibold text-[#31594e] underline underline-offset-4"
+          className="text-link"
           href={`${isSignup ? "/login" : "/signup"}?next=${encodeURIComponent(nextPath)}`}
         >
           {isSignup ? "Log in" : "Create an account"}
         </Link>
-      </p>
-      <p className="mt-6 text-center text-xs leading-5 text-[#78817d]">
-        Your reflections are private to your account.
       </p>
     </section>
   );
