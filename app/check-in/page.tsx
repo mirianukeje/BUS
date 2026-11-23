@@ -1,10 +1,25 @@
 import { AppShell } from "@/app/components/app-shell";
 import { requireUser } from "@/lib/auth/require-user";
+import { CheckInReadError, getLatestCheckIn } from "@/lib/check-ins/server";
+import type { SavedCheckIn } from "@/lib/check-ins/contracts";
+import { CheckInForm } from "@/app/check-in/check-in-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function CheckInPage() {
   const user = await requireUser("/check-in");
+  let latest: SavedCheckIn | null = null;
+  let loadError: { code: string; message: string } | null = null;
+
+  try {
+    latest = await getLatestCheckIn();
+  } catch (error) {
+    if (error instanceof CheckInReadError) {
+      loadError = { code: error.code, message: error.message };
+    } else {
+      throw error;
+    }
+  }
 
   return (
     <AppShell activePage="check-in" email={user.email}>
@@ -17,15 +32,7 @@ export default async function CheckInPage() {
           </p>
         </div>
       </div>
-      <section className="empty-feature">
-        <p className="eyebrow">A practice in noticing</p>
-        <h2>This check-in is still taking shape.</h2>
-        <p>
-          We’re making room for a thoughtful check-in experience. Your private
-          space is ready; this activity is still in development.
-        </p>
-        <span className="coming-soon">In development</span>
-      </section>
+      <CheckInForm initialLatest={latest} loadError={loadError} />
     </AppShell>
   );
 }

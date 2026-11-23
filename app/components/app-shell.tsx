@@ -38,7 +38,7 @@ export function AppShell({ activePage, children, email }: AppShellProps) {
               key={item.key}
             >
               {item.label}
-              {item.key !== "home" && <span className="nav-soon">SOON</span>}
+              {item.key === "journal" && <span className="nav-soon">SOON</span>}
             </Link>
           ))}
         </nav>

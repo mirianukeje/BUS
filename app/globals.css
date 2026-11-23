@@ -1258,6 +1258,254 @@ a {
   color: #77847a;
 }
 
+.check-in-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 28px;
+  max-width: 1040px;
+}
+
+.check-in-form-panel,
+.latest-check-in {
+  border: 1px solid #e1e6de;
+  border-radius: 10px;
+  background: #fbfcf9;
+  padding: clamp(22px, 4vw, 32px);
+}
+
+.check-in-form-panel h2,
+.latest-check-in h2 {
+  margin: 8px 0 22px;
+  color: #344a3d;
+  font-family: var(--serif);
+  font-size: 27px;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+}
+
+.check-in-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.emotion-fieldset {
+  margin: 0;
+  border: 0;
+  padding: 0;
+}
+
+.emotion-fieldset legend,
+.check-in-note-label {
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.emotion-fieldset legend span {
+  color: var(--clay);
+}
+
+.check-in-field-help {
+  margin: 7px 0 12px;
+  color: #748078;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.emotion-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.emotion-option {
+  position: relative;
+  cursor: pointer;
+}
+
+.emotion-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.emotion-option span {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dfe4dc;
+  border-radius: 6px;
+  background: white;
+  padding: 8px;
+  color: #627068;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  transition: 140ms ease;
+}
+
+.emotion-option input:checked + span {
+  border-color: var(--moss);
+  background: #edf3ec;
+  box-shadow: inset 0 0 0 1px var(--moss);
+  color: var(--moss-dark);
+}
+
+.emotion-option input:focus-visible + span {
+  outline: 3px solid #b66f55;
+  outline-offset: 3px;
+}
+
+.check-in-note-label {
+  margin-top: 24px;
+}
+
+.check-in-optional {
+  color: #7a867e;
+  font-weight: 400;
+}
+
+.check-in-note {
+  width: 100%;
+  margin-top: 8px;
+  resize: vertical;
+  border: 1px solid #d5d9d1;
+  border-radius: 4px;
+  background: white;
+  padding: 12px 13px;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.check-in-note:focus {
+  border-color: var(--moss);
+  outline: 2px solid rgb(49 89 78 / 16%);
+  outline-offset: 1px;
+}
+
+.check-in-submit {
+  align-self: flex-start;
+  min-width: 160px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+.check-in-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.field-error {
+  margin: 8px 0 0;
+  color: #762f28;
+  font-size: 12px;
+}
+
+.check-in-feedback {
+  margin: 14px 0 8px;
+  border-left: 3px solid var(--moss);
+  background: #eff3ed;
+  padding: 10px 12px;
+  color: #354d42;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.check-in-feedback-error {
+  border-left-color: #a53d32;
+  background: #f7eeeb;
+  color: #762f28;
+}
+
+.check-in-feedback p {
+  margin: 0;
+}
+
+.check-in-feedback span {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+}
+
+.latest-check-in {
+  align-self: start;
+  background: #f0f4ed;
+}
+
+.latest-check-in h2 {
+  margin-bottom: 18px;
+  font-size: 22px;
+}
+
+.latest-check-in-record {
+  border-top: 1px solid #dfe6dc;
+  padding-top: 16px;
+}
+
+.latest-emotion {
+  display: inline-flex;
+  border: 1px solid #bfcdbf;
+  border-radius: 999px;
+  background: #fbfcf9;
+  padding: 7px 10px;
+  color: var(--moss);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.latest-note {
+  margin: 16px 0;
+  color: #4f6257;
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.latest-check-in time {
+  display: block;
+  color: #7a867e;
+  font-size: 11px;
+}
+
+.latest-check-in-empty,
+.latest-check-in-error {
+  border-top: 1px solid #dfe6dc;
+  padding-top: 16px;
+  color: #68766d;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.latest-check-in-empty p,
+.latest-check-in-error p {
+  margin: 0 0 5px;
+  color: #4f6257;
+  font-weight: 700;
+}
+
+.latest-check-in-empty span {
+  color: #7a867e;
+}
+
+@media (max-width: 760px) {
+  .check-in-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .emotion-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .latest-check-in {
+    margin-bottom: 64px;
+  }
+}
+
 .workspace-mobile-nav {
   display: none;
 }

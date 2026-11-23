@@ -82,7 +82,7 @@ export default async function HomePage() {
             </div>
             <div className="dashboard-tools">
               <Link className="dashboard-tool" href="/check-in">
-                <span className="tool-status">IN DEVELOPMENT</span>
+                <span className="tool-status">AVAILABLE</span>
                 <h3>Daily check-in</h3>
                 <p>Pause and put a name to what you’re feeling.</p>
                 <span className="tool-arrow" aria-hidden="true">↗</span>
