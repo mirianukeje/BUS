@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState, useSyncExternalStore, type FormEvent } from "react";
 import Link from "next/link";
 import { saveCheckIn } from "@/app/check-in/actions";
 import {
@@ -16,12 +16,25 @@ type CheckInFormProps = {
   loadError: { code: string; message: string } | null;
 };
 
-function formatCheckInDate(value: string) {
+function subscribeToTimeZoneChanges() {
+  return () => {};
+}
+
+function getLocalTimeZone() {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+function getServerTimeZone() {
+  return "UTC";
+}
+
+function formatCheckInDate(value: string, timeZone: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Date unavailable";
   return new Intl.DateTimeFormat("en", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone,
   }).format(date);
 }
 
@@ -29,11 +42,24 @@ export function CheckInForm({ initialLatest, loadError }: CheckInFormProps) {
   const router = useRouter();
   const [emotion, setEmotion] = useState("");
   const [note, setNote] = useState("");
-  const [latest, setLatest] = useState(initialLatest);
+  const [locallySaved, setLocallySaved] = useState<SavedCheckIn | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const timeZone = useSyncExternalStore(
+    subscribeToTimeZoneChanges,
+    getLocalTimeZone,
+    getServerTimeZone,
+  );
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<CheckInFieldErrors>({});
+
+  const latest =
+    locallySaved &&
+    (!initialLatest ||
+      Date.parse(locallySaved.created_at) >= Date.parse(initialLatest.created_at))
+      ? locallySaved
+      : initialLatest;
+  const isShowingLocallySaved = locallySaved !== null && latest === locallySaved;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -57,7 +83,7 @@ export function CheckInForm({ initialLatest, loadError }: CheckInFormProps) {
     try {
       const result = await saveCheckIn(validated.data);
       if (result.ok) {
-        setLatest(result.checkIn);
+        setLocallySaved(result.checkIn);
         setEmotion("");
         setNote("");
         setSuccessMessage("Your check-in was saved.");
@@ -90,6 +116,7 @@ export function CheckInForm({ initialLatest, loadError }: CheckInFormProps) {
               fieldErrors.emotion ? "emotion-error" : "emotion-help"
             }
             className="emotion-fieldset"
+            disabled={isSaving}
           >
             <legend>Choose an emotion <span aria-hidden="true">*</span></legend>
             <p className="check-in-field-help" id="emotion-help">
@@ -122,6 +149,7 @@ export function CheckInForm({ initialLatest, loadError }: CheckInFormProps) {
           <textarea
             aria-describedby={fieldErrors.note ? "note-error" : "note-help"}
             className="check-in-note"
+            disabled={isSaving}
             id="check-in-note"
             maxLength={undefined}
             name="note"
@@ -174,7 +202,7 @@ export function CheckInForm({ initialLatest, loadError }: CheckInFormProps) {
         <p className="eyebrow">Your latest</p>
         <h2 id="latest-check-in-title">Most recent check-in</h2>
 
-        {loadError ? (
+        {loadError && !isShowingLocallySaved ? (
           <div className="latest-check-in-error" role="alert">
             {loadError.code === "AUTH_REQUIRED" ? (
               <>
@@ -192,7 +220,7 @@ export function CheckInForm({ initialLatest, loadError }: CheckInFormProps) {
             <span className="latest-emotion">{latest.emotion}</span>
             {latest.note && <p className="latest-note">“{latest.note}”</p>}
             <time dateTime={latest.created_at}>
-              {formatCheckInDate(latest.created_at)}
+              {formatCheckInDate(latest.created_at, timeZone)}
             </time>
           </article>
         ) : (
